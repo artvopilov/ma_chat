@@ -9,36 +9,45 @@ let count = 1;
 wsS.on('connection', ws => {
     console.log(`Connected ${count}`);
 
-    /*clients.forEach(client => {
-        client.ws.send(`Client connected ${count}`)
-    });*/
-
     const client = {ws, id: count++};
+    broadcast(client, "Connected");
     clients.push(client);
 
     ws.on('message', data => {
-        clients.forEach(cl => {
-            cl.ws.send(JSON.stringify({
-                user: client.id,
-                message: data
-            }))
-        });
+        broadcast(client, data)
     });
 
     ws.on('close', () => {
-        exterminate(ws);
+        exterminate(client);
     });
 });
 
 
-function exterminate(ws) {
-    clients.forEach((client, i) => {
-        if (client.ws === ws) {
-            clients.splice(i, 1);
-            console.log("user disconnected");
+function broadcast(client, data) {
+    clients.forEach(cl => {
+        cl.ws.send(JSON.stringify({
+            user: client.id,
+            message: data
+        }))
+    });
+}
+
+
+function exterminate(cl) {
+    let count = 0;
+    let client;
+    while (count < clients.length) {
+        client = clients[count];
+        if (client === cl) {
+            clients.splice(count, 1);
+            console.log(`User ${cl.id} disconnected`);
+            continue;
         }
-        else {
-            client.ws.send("user disconnected");
-        }
-    })
+        client.ws.send(JSON.stringify({
+            user: cl.id,
+            message: `Disconnected`
+        }));
+
+        count++;
+    }
 }
