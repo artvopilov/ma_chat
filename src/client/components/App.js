@@ -1,4 +1,7 @@
 const React = require('react');
+const InputMessage = require('./InputMessage');
+const Messages = require('./Messages');
+const Connection = require('./Connection');
 
 
 class App extends React.Component {
@@ -55,29 +58,16 @@ class App extends React.Component {
         this.connectionRef.innerHTML = text
     }
 
-    /*
-    Button.addEventListener('click', () => {
-    const mess = Input.value;
-    ws.send(mess);
-    });*/
+    getConnectionRef(node) {
+        this.connectionRef = node
+    }
 
     render() {
         return(
             <div>
-                <form onSubmit={event => this.handleMessageSend(event)}>
-                    <input id="mess" type="text" placeholder="Type here..." onChange={(event) => {this.onChange(event)}}/>
-                    <button id="sendMess">Send</button>
-                </form>
-                <div id="connection" ref={(node) => {this.connectionRef = node}}/>
-                <ul>
-                    {this.state.messages.map(mess => {
-                        return (
-                            <li>
-                                {`From ${mess.user}: ${mess.message}`}
-                            </li>
-                        )
-                    })}
-                </ul>
+                <Connection getConnectionRef={this.getConnectionRef.bind(this)}/>
+                <InputMessage onChangeInput={this.onChange.bind(this)} handleMessageSend={this.handleMessageSend.bind(this)}/>
+                <Messages messages={this.state.messages}/>
             </div>
         )
     }

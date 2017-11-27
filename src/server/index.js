@@ -7,7 +7,7 @@ let count = 1;
 
 
 wsS.on('connection', ws => {
-    console.log(`Connected ${count}`);
+    console.log(`User ${count} connected`);
 
     const client = {ws, id: count++};
     broadcast(client, "Connected");
@@ -25,10 +25,18 @@ wsS.on('connection', ws => {
 
 function broadcast(client, data) {
     clients.forEach(cl => {
-        cl.ws.send(JSON.stringify({
-            user: client.id,
-            message: data
-        }))
+        if (client.id === cl.id) {
+            cl.ws.send(JSON.stringify({
+                user: "You",
+                message: data
+            }))
+        }
+        else {
+            cl.ws.send(JSON.stringify({
+                user: client.id,
+                message: data
+            }))
+        }
     });
 }
 
