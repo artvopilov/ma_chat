@@ -1,4 +1,5 @@
-.idea
+.idea/
+.idea/misk.xml
 node_modules/
 package-lock.json
 dist/
