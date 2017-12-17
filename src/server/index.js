@@ -1,5 +1,7 @@
 const WebSocket = require('ws');
-const wsS = new WebSocket.Server({port: 1920});
+const config = require('config');
+
+const wsS = new WebSocket.Server({port: config.get('server.port')});
 
 
 let clients = [];
@@ -8,6 +10,10 @@ let count = 1;
 
 wsS.on('connection', ws => {
     console.log(`User ${count} connected`);
+    ws.send(JSON.stringify({
+        user: count,
+        message: "Authorization"
+    }));
 
     const client = {ws, id: count++};
     broadcast(client, "Connected");

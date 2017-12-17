@@ -1,7 +1,7 @@
 const React = require('react');
 const InputMessage = require('./InputMessage');
 const Messages = require('./Messages');
-const Connection = require('./Connection');
+const StatusBar = require('./StatusBar');
 
 
 class App extends React.Component {
@@ -10,24 +10,32 @@ class App extends React.Component {
 
         this.state = {
             currentInput: "",
-            messages: []
+            messages: [],
+            user: "",
+            connection: "disconnected"
         };
     }
 
     componentDidMount() {
-        this.showStatus("Disconnected");
 
         this.ws = new WebSocket('ws://localhost:1920');
 
 
         this.ws.onopen = () => {
-            this.showStatus("Connected");
+            this.state.connection = "connected";
+            this.forceUpdate();
         };
 
         this.ws.onmessage = (event) => {
             const mess = JSON.parse(event.data);
-            this.state.messages.push(mess);
-            this.forceUpdate();
+            if (mess.message === "Authorization") {
+                this.state.user = String(mess.user);
+                this.forceUpdate();
+            }
+            else {
+                this.state.messages.push(mess);
+                this.forceUpdate();
+            }
         };
 
         this.ws.onerror = (err) => {
@@ -35,7 +43,8 @@ class App extends React.Component {
         };
 
         this.ws.onclose = () => {
-            this.showStatus("Disconnected")
+            this.state.connection = "disconnected";
+            this.forceUpdate();
         };
     }
 
@@ -46,6 +55,7 @@ class App extends React.Component {
     handleMessageSend(event) {
         event.preventDefault();
         this.ws.send(this.state.currentInput);
+        event.target.firstElementChild.value = ""
     }
 
     onChange(event) {
@@ -54,18 +64,10 @@ class App extends React.Component {
         })
     }
 
-    showStatus(text) {
-        this.connectionRef.innerHTML = text
-    }
-
-    getConnectionRef(node) {
-        this.connectionRef = node
-    }
-
     render() {
         return(
-            <div>
-                <Connection getConnectionRef={this.getConnectionRef.bind(this)}/>
+            <div id="main">
+                <StatusBar user={this.state.user} connection={this.state.connection}/>
                 <InputMessage onChangeInput={this.onChange.bind(this)} handleMessageSend={this.handleMessageSend.bind(this)}/>
                 <Messages messages={this.state.messages}/>
             </div>

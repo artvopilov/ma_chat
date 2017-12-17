@@ -9,7 +9,7 @@ class Messages extends React.Component {
 
     render() {
         return (
-            <ul>
+            <ul id="messages">
                 {this.props.messages.map(mess => {
                     return (
                         <li>

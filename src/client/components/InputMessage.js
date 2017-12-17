@@ -9,7 +9,7 @@ class InputMessage extends React.Component {
 
     render() {
         return (
-            <form onSubmit={event => this.props.handleMessageSend(event)}>
+            <form id="inputForm" onSubmit={event => this.props.handleMessageSend(event)}>
                 <input id="mess" type="text" placeholder="Type here..." onChange={(event) => {this.props.onChangeInput(event)}}/>
                 <button id="sendMess">Send</button>
             </form>

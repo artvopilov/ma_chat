@@ -20,6 +20,12 @@ module.exports = {
                     use: 'css-loader'
                 })
 
+            },
+            {
+                test: /\.(jpe?g|png|gif|svg)$/i,
+                loaders: [
+                    'file-loader?name=images/[name].[ext]'
+                ]
             }
         ]
     },
