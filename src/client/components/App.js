@@ -12,17 +12,16 @@ class App extends React.Component {
             currentInput: "",
             messages: [],
             user: "",
-            connection: "disconnected"
+            connectionStatus: "disconnected"
         };
     }
 
     componentDidMount() {
-
         this.ws = new WebSocket('ws://localhost:1920');
 
 
         this.ws.onopen = () => {
-            this.state.connection = "connected";
+            this.state.connectionStatus = "connected";
             this.forceUpdate();
         };
 
@@ -39,11 +38,12 @@ class App extends React.Component {
         };
 
         this.ws.onerror = (err) => {
-            this.showStatus(err);
+            this.state.connectionStatus = err.data;
+            this.forceUpdate();
         };
 
         this.ws.onclose = () => {
-            this.state.connection = "disconnected";
+            this.state.connectionStatus = "disconnected";
             this.forceUpdate();
         };
     }
@@ -54,8 +54,14 @@ class App extends React.Component {
 
     handleMessageSend(event) {
         event.preventDefault();
-        this.ws.send(this.state.currentInput);
-        event.target.firstElementChild.value = ""
+        const sendData = {
+            type: "message",
+            data: this.state.currentInput
+        };
+
+        this.ws.send(JSON.stringify(sendData));
+        event.target.firstElementChild.value = "";
+        this.state.currentInput = "";
     }
 
     onChange(event) {
@@ -64,12 +70,28 @@ class App extends React.Component {
         })
     }
 
+    logIn() {
+        const username = prompt("Enter username: ", "SomeUser");
+        const loginData = {
+            type: "login",
+            data: username
+        };
+        this.ws.send(JSON.stringify(loginData))
+    }
+
+
     render() {
         return(
             <div id="main">
-                <StatusBar user={this.state.user} connection={this.state.connection}/>
-                <InputMessage onChangeInput={this.onChange.bind(this)} handleMessageSend={this.handleMessageSend.bind(this)}/>
-                <Messages messages={this.state.messages}/>
+                <StatusBar onClickLogIn={this.logIn.bind(this)} user={this.state.user} connection={this.state.connectionStatus}/>
+                {this.state.user !== "" ?
+                    <InputMessage onChangeInput={this.onChange.bind(this)} handleMessageSend={this.handleMessageSend.bind(this)}/> :
+                    ""
+                }
+                {this.state.user !== "" ?
+                    <Messages messages={this.state.messages}/> :
+                    ""
+                }
             </div>
         )
     }

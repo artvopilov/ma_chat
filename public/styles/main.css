@@ -36,7 +36,7 @@ body::after {
 #main {
     display: flex;
     flex-flow: column wrap;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
     align-content: center;
 }
@@ -58,6 +58,10 @@ body::after {
 #statusBar #user {
     float: right;
     margin-right: 17%;
+}
+
+#statusBar .login {
+    cursor: pointer;
 }
 
 #inputForm {

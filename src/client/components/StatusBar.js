@@ -8,10 +8,14 @@ class StatusBar extends React.Component {
     }
 
     render() {
+        const userField = this.props.user === "" ?
+            <a id="user" className="login" onClick={this.props.onClickLogIn}>Log in</a> :
+            <div id="user">{`User: ${this.props.user}`}</div>;
+
         return (
             <div id="statusBar">
                 <div id="connection">Status: {this.props.connection}</div>
-                <div id="user">{this.props.user ? `User: ${this.props.user}` : "Log in"}</div>
+                {userField}
             </div>
         )
     }
@@ -19,7 +23,9 @@ class StatusBar extends React.Component {
 
 
 StatusBar.proptypes = {
-    getConnectionRef: PropTypes.func
+    connection: PropTypes.string,
+    user: PropTypes.string,
+    onClickLogIn: PropTypes.func
 };
 
 

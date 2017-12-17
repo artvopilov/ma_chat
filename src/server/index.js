@@ -4,23 +4,32 @@ const config = require('config');
 const wsS = new WebSocket.Server({port: config.get('server.port')});
 
 
-let clients = [];
+const clients = [];
 let count = 1;
 
-
 wsS.on('connection', ws => {
+
     console.log(`User ${count} connected`);
-    ws.send(JSON.stringify({
-        user: count,
-        message: "Authorization"
-    }));
+    let client;
 
-    const client = {ws, id: count++};
-    broadcast(client, "Connected");
-    clients.push(client);
+    ws.on('message', message => {
+        const messJson = JSON.parse(message);
+        if (messJson.type === "login") {
+            ws.send(JSON.stringify({
+                user: messJson.data,
+                message: "Authorization"
+            }));
 
-    ws.on('message', data => {
-        broadcast(client, data)
+            client = {ws, id: count++, username: messJson.data};
+            console.log(`User ${client.username} logged in`);
+
+            broadcast(client, "Connected");
+            clients.push(client);
+        }
+        else {
+            broadcast(client, messJson.data)
+        }
+
     });
 
     ws.on('close', () => {
@@ -39,7 +48,7 @@ function broadcast(client, data) {
         }
         else {
             cl.ws.send(JSON.stringify({
-                user: client.id,
+                user: client.username,
                 message: data
             }))
         }
