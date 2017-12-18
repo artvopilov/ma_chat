@@ -2,6 +2,7 @@ const React = require('react');
 const InputMessage = require('./InputMessage');
 const Messages = require('./Messages');
 const StatusBar = require('./StatusBar');
+const Chat = require('./Chat');
 
 
 class App extends React.Component {
@@ -85,11 +86,8 @@ class App extends React.Component {
             <div id="main">
                 <StatusBar onClickLogIn={this.logIn.bind(this)} user={this.state.user} connection={this.state.connectionStatus}/>
                 {this.state.user !== "" ?
-                    <InputMessage onChangeInput={this.onChange.bind(this)} handleMessageSend={this.handleMessageSend.bind(this)}/> :
-                    ""
-                }
-                {this.state.user !== "" ?
-                    <Messages messages={this.state.messages}/> :
+                    <Chat onChangeInput={this.onChange.bind(this)} handleMessageSend={this.handleMessageSend.bind(this)}
+                    messages={this.state.messages}/> :
                     ""
                 }
             </div>
