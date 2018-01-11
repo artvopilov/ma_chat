@@ -4,6 +4,9 @@
     border: 0;
     font-size: 100%;
     vertical-align: baseline;
+    outline: none;
+    text-decoration: none;
+    color: black;
 }
 
 
@@ -47,6 +50,35 @@ body::after {
     height: 45px;
     line-height: 45px;
     background-color: blanchedalmond;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#statusBar #connection {
+    float: right;
+    width: 160px;
+}
+
+#statusBar #nav {
+    list-style: none;
+    width: 220px;
+}
+
+#statusBar #nav li {
+    display: inline-block;
+    margin: auto 10px;
+    font-weight: bold;
+}
+
+#statusBar #nav #liAuth {
+    width: 65px;
+}
+
+#statusBar #user {
+    width: 160px;
+    float: left;
 }
 
 #chat {
@@ -58,24 +90,24 @@ body::after {
     width: 100%;
 }
 
-#statusBar #connection {
-    float: left;
-    margin-left: 17%;
+#authForm {
+    width: 12%;
+    margin: auto;
+    display: block;
 }
 
-#statusBar #user {
-    float: right;
-    margin-right: 17%;
+#authForm input {
+    width: 100%;
 }
 
-#statusBar .login {
-    cursor: pointer;
+#authForm button {
+    width: 100%;
 }
 
 #inputForm {
     width: 20%;
     margin: auto;
-    display: inline-block;
+    display: block;
 }
 
 #inputForm input {

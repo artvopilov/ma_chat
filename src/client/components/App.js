@@ -1,8 +1,15 @@
 const React = require('react');
-const InputMessage = require('./InputMessage');
-const Messages = require('./Messages');
 const StatusBar = require('./StatusBar');
 const Chat = require('./Chat');
+const Auth = require('./Auth');
+
+import {
+    BrowserRouter,
+    Route,
+    Link,
+    Redirect,
+    withRouter
+} from 'react-router-dom'
 
 
 class App extends React.Component {
@@ -13,12 +20,12 @@ class App extends React.Component {
             currentInput: "",
             messages: [],
             user: "",
-            connectionStatus: "disconnected"
+            connectionStatus: "disconnected",
         };
     }
 
     componentDidMount() {
-        this.ws = new WebSocket('ws://localhost:1920');
+        this.ws = new WebSocket('ws://localhost:1921');
 
 
         this.ws.onopen = () => {
@@ -31,6 +38,12 @@ class App extends React.Component {
             if (mess.message === "Authorization") {
                 this.state.user = String(mess.user);
                 this.forceUpdate();
+            }
+            else if (mess.message === "UnAuthorization") {
+                this.setState({
+                    user: "",
+                    messages: []
+                })
             }
             else {
                 this.state.messages.push(mess);
@@ -50,6 +63,13 @@ class App extends React.Component {
     }
 
     componentWillUnmount() {
+        if (this.state.user !== "") {
+            const logoutData = {
+                type: "logout",
+                data: this.state.user
+            };
+            this.ws.send(JSON.stringify(logoutData));
+        }
         this.ws.close()
     }
 
@@ -80,17 +100,52 @@ class App extends React.Component {
         this.ws.send(JSON.stringify(loginData))
     }
 
+    handleLogIn(username) {
+        const loginData = {
+            type: "login",
+            data: username
+        };
+        this.ws.send(JSON.stringify(loginData));
+    }
+
+    handleLogOut(username) {
+        const logoutData = {
+            type: "logout",
+            data: username
+        };
+        this.ws.send(JSON.stringify(logoutData));
+    }
+
 
     render() {
+
         return(
-            <div id="main">
-                <StatusBar onClickLogIn={this.logIn.bind(this)} user={this.state.user} connection={this.state.connectionStatus}/>
-                {this.state.user !== "" ?
-                    <Chat onChangeInput={this.onChange.bind(this)} handleMessageSend={this.handleMessageSend.bind(this)}
-                    messages={this.state.messages}/> :
-                    ""
-                }
-            </div>
+            <BrowserRouter>
+                <div id="main">
+                    <StatusBar
+                        onClickLogIn={this.logIn.bind(this)}
+                        user={this.state.user}
+                        connection={this.state.connectionStatus}
+                        handleLogOut={this.handleLogOut.bind(this)}
+                    />
+                    <Route path="/auth" render={() =>
+                        <Auth
+                            handleLogIn={this.handleLogIn.bind(this)}
+                            user={this.state.user}
+                        />
+                    }/>
+                    <Route path="/chat" render={() => (
+                        this.state.user !== "" ? (
+                            <Chat onChangeInput={this.onChange.bind(this)}
+                                  handleMessageSend={this.handleMessageSend.bind(this)}
+                                  messages={this.state.messages}
+                            />
+                        ) : (
+                            <Redirect to="/auth"/>
+                        )
+                    )}/>
+                </div>
+            </BrowserRouter>
         )
     }
 
