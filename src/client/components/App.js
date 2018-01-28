@@ -108,10 +108,10 @@ class App extends React.Component {
         this.ws.send(JSON.stringify(loginData));
     }
 
-    handleLogOut(username) {
+    handleLogOut() {
         const logoutData = {
             type: "logout",
-            data: username
+            data: this.state.user
         };
         this.ws.send(JSON.stringify(logoutData));
     }

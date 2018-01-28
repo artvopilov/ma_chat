@@ -18,13 +18,13 @@ class StatusBar extends React.Component {
             <div id="statusBar">
                 <div id="connection">Status: {this.props.connection}</div>
                 <ul id="nav">
-                    <li><Link to="/">Main</Link></li>
-                    <li><Link to="/chat">Chat</Link></li>
-                    <li id="liAuth" onClick={() => {
+                    <li className={this.props.location.pathname === '/' ? 'on' : ''}><Link to="/"><i className="fa fa-home" aria-hidden="true"/> Main</Link></li>
+                    <li className={this.props.location.pathname === '/chat' ? 'on' : ''}><Link to="/chat"><i className="fa fa-comments" aria-hidden="true"/> Chat</Link></li>
+                    <li className={this.props.location.pathname === '/auth' ? 'on' : ''} onClick={() => {
                         if (this.props.user !== "") {
                             this.props.handleLogOut();
                         }
-                    }}><Link to="/auth">{this.props.user === "" ? "Login" : "Logout"}</Link></li>
+                    }}><Link to="/auth"><i className="fa fa-user" aria-hidden="true"/> {this.props.user === "" ? "Login" : "Logout"}</Link></li>
                 </ul>
                 <div id="user">{`User: ${this.props.user === "" ? "Anonymous" : this.props.user}`}</div>
             </div>

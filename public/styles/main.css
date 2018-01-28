@@ -48,7 +48,6 @@ body::after {
     margin: 30px auto;
     width: 100%;
     height: 45px;
-    line-height: 45px;
     background-color: blanchedalmond;
     display: flex;
     flex-flow: row wrap;
@@ -63,7 +62,7 @@ body::after {
 
 #statusBar #nav {
     list-style: none;
-    width: 220px;
+    width: 260px;
 }
 
 #statusBar #nav li {
@@ -72,8 +71,8 @@ body::after {
     font-weight: bold;
 }
 
-#statusBar #nav #liAuth {
-    width: 65px;
+#statusBar #nav .on {
+    border-bottom: 2px solid black;
 }
 
 #statusBar #user {

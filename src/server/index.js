@@ -10,7 +10,7 @@ let count = 1;
 wsS.on('connection', ws => {
 
     let currCount = count++;
-    console.log(`User ${currCount} connected`);
+    console.log(`Computer ${currCount} connected`);
     let client;
 
     ws.on('message', message => {
@@ -71,7 +71,7 @@ function exterminate(cl) {
         client = clients[count];
         if (client === cl) {
             clients.splice(count, 1);
-            console.log(`User ${cl.id} disconnected`);
+            console.log(`Computer ${cl.id} logged out(${cl.username})`);
             continue;
         }
         client.ws.send(JSON.stringify({
